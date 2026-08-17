@@ -309,3 +309,15 @@ if (typeof (globalThis as { EventSource?: unknown }).EventSource === 'undefined'
     document.getElementById('toast-root')?.remove()
   })
 }
+
+// ---------------------------------------------------------------------------
+// Snapshot the editor store's pristine state.
+//
+// Same class of cross-file flake as the cleanup above, one layer down:
+// `useEditorStore.setState(partial)` merges, so a test file that seeds the store
+// with a hand-written partial silently inherits every field it didn't mention
+// from whichever file ran before it. `resetEditorStore()` (see
+// `./fixtures/editorStore`) restores the initial state instead, and it has to
+// take its snapshot HERE — from the preload, before any test file runs — because
+// a lazy first import would capture whatever the previous file left behind.
+await import('./fixtures/editorStore')
